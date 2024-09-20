@@ -5,8 +5,8 @@ using namespace std;
 class student{
     int roll;
     char div;
-    string name;
-    string address;
+    char name[30];
+    char address[30];
     public:
     void accept(){
         cout<<"Enter the name of the student: \n";
@@ -19,7 +19,7 @@ class student{
         cin>>address;
     }
     void display(){
-        cout<<"\t"<<name<<"\t"<<roll<<"\t"<<div<<"\t"<<address<<"\n";
+        cout<<name<<"\t"<<roll<<"\t"<<div<<"\t"<<address<<"\n";
     }
     bool checkr(int r){
         if (r == roll)
@@ -72,6 +72,7 @@ void showbyroll(){
             cout << "Name \t" << " roll \t" << "div \t" << "address \n";
             s.display();
             flag = true;
+            break;
         }
     }
     if (flag == false)
@@ -91,17 +92,82 @@ while (a.read((char *)&s,sizeof(s)))
 }
 a.close();
 }
-
+void deletebyroll(){
+    cout<<"Enter the roll no. :";
+    int r;
+    cin>>r;
+    ofstream opn("temp.txt");
+    ifstream a("student.txt");
+    student s;
+    bool flag = true;
+    while (a.read((char *)&s,sizeof(s)))
+    {
+        if (s.checkr(r))
+        {
+            flag = false;
+            continue;
+        }
+        else{
+            opn.write((char *)&s,sizeof(s));  
+        }
+    }
+    a.close();
+    opn.close();
+    if (flag == true)
+    {
+        cout<<"Roll No. not found in the records\n";
+    }
+    else{
+    remove("student.txt");
+    rename("temp.txt", "student.txt");
+    cout << "Record deleted succesfully.\n";
+    }
+    
+}
+void updatebyroll(){
+    cout<<"Enter the roll no. :";
+    int r;
+    cin>>r;
+    ofstream opn("temp.txt");
+    ifstream a("student.txt");
+    student s;
+    bool flag = true;
+    while (a.read((char *)&s,sizeof(s)))
+    {
+        if (s.checkr(r))
+        {
+            flag = false;
+            s.accept();
+            opn.write((char *)&s,sizeof(s));
+        }
+        else{
+            opn.write((char *)&s,sizeof(s));  
+        }
+    }
+    a.close();
+    opn.close();
+    if (flag == true)
+    {
+        cout<<"Roll No. not found in the records\n";
+    }
+ else{
+    remove("student.txt");
+    rename("temp.txt", "student.txt");
+    cout << "Record updated succesfully.\n";
+    }
+}
 int main(){
     int ch = 0;
-    while (ch != 5)
+    while (ch != 7)
     {
         cout << "\nSelect option from the below: \n"
              << "1. To Add Record into the file: \n"
              << "2. To Display Records from the file: \n"
              << "3. To Add new Records to the file: \n"
              << "4. Check if roll no exist and display: \n"
-             << "5. Exit from the program: \n";
+             <<"5. Delete Record by roll no. :\n"
+             <<"6. Update Record by roll no. :\n"
+             << "7. Exit from the program: \n";
         cin>>ch;
         switch (ch)
         {
@@ -118,7 +184,14 @@ int main(){
             showbyroll();
             break;
         case 5:
+            deletebyroll();
             break;
+        case 6:
+            updatebyroll();
+            break;
+
+        case 7:
+        break;
         default:
             cout << "Select correct option\n";
             break;
